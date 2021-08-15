@@ -3,38 +3,38 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "openfin-ngrx": {
+    "openfin-window-manager": {
       "projectType": "library",
-      "root": "projects/openfin-ngrx",
-      "sourceRoot": "projects/openfin-ngrx/src",
+      "root": "projects/openfin-window-manager",
+      "sourceRoot": "projects/openfin-window-manager/src",
       "prefix": "lib",
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-ng-packagr:build",
           "options": {
-            "tsConfig": "projects/openfin-ngrx/tsconfig.lib.json",
-            "project": "projects/openfin-ngrx/ng-package.json"
+            "tsConfig": "projects/openfin-window-manager/tsconfig.lib.json",
+            "project": "projects/openfin-window-manager/ng-package.json"
           },
           "configurations": {
             "production": {
-              "tsConfig": "projects/openfin-ngrx/tsconfig.lib.prod.json"
+              "tsConfig": "projects/openfin-window-manager/tsconfig.lib.prod.json"
             }
           }
         },
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
-            "main": "projects/openfin-ngrx/src/test.ts",
-            "tsConfig": "projects/openfin-ngrx/tsconfig.spec.json",
-            "karmaConfig": "projects/openfin-ngrx/karma.conf.js"
+            "main": "projects/openfin-window-manager/src/test.ts",
+            "tsConfig": "projects/openfin-window-manager/tsconfig.spec.json",
+            "karmaConfig": "projects/openfin-window-manager/karma.conf.js"
           }
         },
         "lint": {
           "builder": "@angular-devkit/build-angular:tslint",
           "options": {
             "tsConfig": [
-              "projects/openfin-ngrx/tsconfig.lib.json",
-              "projects/openfin-ngrx/tsconfig.spec.json"
+              "projects/openfin-window-manager/tsconfig.lib.json",
+              "projects/openfin-window-manager/tsconfig.spec.json"
             ],
             "exclude": ["**/node_modules/**"]
           }
@@ -173,5 +173,5 @@
       }
     }
   },
-  "defaultProject": "openfin-ngrx"
+  "defaultProject": "openfin-window-manager"
 }
