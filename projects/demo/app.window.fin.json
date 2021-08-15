@@ -1,0 +1,15 @@
+{
+  "devtools_port": 9090,
+  "licenseKey": "request-a-key",
+  "startup_app": {
+    "name": "openfin-window-manager demo",
+    "description": "openfin-window-manager demo",
+    "url": "http://localhost:4200/",
+    "uuid": "openfin-window-manager-demo",
+    "autoShow": true,
+    "applicationIcon": "http://localhost:4200/favicon.ico"
+  },
+  "runtime": {
+    "version": "stable"
+  }
+}
