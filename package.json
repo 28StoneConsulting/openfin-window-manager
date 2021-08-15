@@ -1,16 +1,16 @@
 {
-  "name": "@28stoneconsulting/openfin-ngrx",
+  "name": "@28stoneconsulting/openfin-window-manager",
   "version": "0.0.0-development",
   "author": "Alexey Valner",
   "scripts": {
     "start": "npm run demo:serve",
     "build": "npm run lib:build && npm run demo:build",
-    "test": "ng test demo --watch false && ng test openfin-ngrx --watch false",
+    "test": "ng test demo --watch false && ng test openfin-window-manager --watch false",
     "lint": "ng lint",
-    "lib:build": "ng build openfin-ngrx --prod",
-    "lib:build:dev": "ng build openfin-ngrx --watch",
-    "lib:test": "ng test openfin-ngrx",
-    "lib:ci:test": "ng test openfin-ngrx --watch false --progress false --browsers ChromeHeadless --code-coverage",
+    "lib:build": "ng build openfin-window-manager --prod",
+    "lib:build:dev": "ng build openfin-window-manager --watch",
+    "lib:test": "ng test openfin-window-manager",
+    "lib:ci:test": "ng test openfin-window-manager --watch false --progress false --browsers ChromeHeadless --code-coverage",
     "demo:test": "ng test demo",
     "demo:ci:test": "ng test demo --watch false --progress false --browsers ChromeHeadless --code-coverage",
     "demo:build": "ng build demo",
@@ -19,7 +19,7 @@
     "demo:serve": "npm-run-all -p demo:ng:serve demo:openfin:serve",
     "lint:commit": "commitlint -e",
     "semantic-release": "semantic-release",
-    "codecov": "cat ./coverage/openfin-ngrx/lcov.info | codecov --pipe"
+    "codecov": "cat ./coverage/openfin-window-manager/lcov.info | codecov --pipe"
   },
   "dependencies": {
     "@angular/animations": "~11.1.2",
@@ -85,7 +85,7 @@
       "commit-msg": "commitlint --edit"
     }
   },
-  "repository": "https://github.com/28StoneConsulting/openfin-ngrx",
+  "repository": "https://github.com/28StoneConsulting/openfin-window-manager",
   "license": "ISC",
   "config": {
     "commitizen": {
