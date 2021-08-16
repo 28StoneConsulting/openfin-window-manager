@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { AnchorType, Bounds } from 'openfin/_v2/shapes/shapes';
 import { _Window } from 'openfin/_v2/api/window/window';
 import { MonitorDetails, Rect } from 'openfin/_v2/api/system/monitor';
+import WindowBoundsEvent = fin.WindowBoundsEvent;
 
 export type WindowMonitor = {
   primary: boolean;
@@ -16,6 +17,7 @@ const HORIZONTAL_OFFSET = 100;
   providedIn: 'root',
 })
 export class OpenfinWindowManagerService {
+  private lastWindow: _Window;
   private lastWindowName: string;
   private lastWindowBounds: Bounds;
   private lastWindowMonitor: WindowMonitor;
@@ -55,6 +57,9 @@ export class OpenfinWindowManagerService {
     }
 
     await window.setBounds(windowBounds);
+    await this.lastWindow?.removeListener('bounds-changed', this.windowBoundsChangeHandler);
+    window.addListener('bounds-changed', this.windowBoundsChangeHandler);
+    this.lastWindow = window;
     this.lastWindowBounds = windowBounds;
     this.lastWindowName = name;
     window.show();
@@ -72,25 +77,29 @@ export class OpenfinWindowManagerService {
     this.layoutPassNum = 0;
   }
 
-  getCenterWindowBounds = async (window: _Window, width: number, height: number, monitorBounds: Rect): Promise<Bounds> => {
+  private windowBoundsChangeHandler = (e: WindowBoundsEvent) => {
+    this.lastWindowBounds.top = e.top;
+    this.lastWindowBounds.left = e.left;
+    this.lastWindowBounds.right = e.left + e.width;
+    this.lastWindowBounds.bottom = e.top + e.height;
+    this.lastWindowBounds.width = e.width;
+    this.lastWindowBounds.height = e.height;
+  }
+
+  private getCenterWindowBounds = async (window: _Window, width: number, height: number, monitorBounds: Rect): Promise<Bounds> => {
     const windowTop = monitorBounds.top + (monitorBounds.bottom - monitorBounds.top) / 2 - height / 2;
     const windowLeft = monitorBounds.left + (monitorBounds.right - monitorBounds.left) / 2 - width / 2;
     return { top: windowTop, left: windowLeft, bottom: windowTop + height, right: windowLeft + width, width, height };
   }
 
-  windowFitToScreen = (windowBounds: Bounds, monitorBounds: Rect) => {
+  private windowFitToScreen = (windowBounds: Bounds, monitorBounds: Rect) => {
     return windowBounds.top >= monitorBounds.top
       && windowBounds.left >= monitorBounds.left
       && windowBounds.bottom <= monitorBounds.bottom
       && windowBounds.right <= monitorBounds.right;
   }
 
-  getWindowCount = async () => {
-    const children = await fin.Application.getCurrentSync().getChildWindows();
-    return children.length;
-  }
-
-  getWindowMonitor = async (window: _Window): Promise<WindowMonitor> => {
+  private getWindowMonitor = async (window: _Window): Promise<WindowMonitor> => {
     const windowBounds = await window.getBounds();
     const monitorInfo = await fin.System.getMonitorInfo();
 
