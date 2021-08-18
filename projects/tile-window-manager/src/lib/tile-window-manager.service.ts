@@ -5,15 +5,13 @@ import { MonitorDetails, Rect } from 'openfin/_v2/api/system/monitor';
 import { TileManagerProxyMessage, TileWindowManager } from './types';
 import { WindowOption } from 'openfin/_v2/api/window/windowOption';
 import WindowBoundsEvent = fin.WindowBoundsEvent;
+import { HORIZONTAL_OFFSET, WINDOW_MANAGER_CHANNEL, WINDOW_OFFSET } from './config';
 
 export type WindowMonitor = {
   primary: boolean;
   bounds: Rect;
   name: string;
 };
-
-const WINDOW_OFFSET = 30;
-const HORIZONTAL_OFFSET = 100;
 
 @Injectable({
   providedIn: 'root',
@@ -43,7 +41,7 @@ export class TileWindowManagerService implements TileWindowManager {
       }
     };
 
-    fin.InterApplicationBus.subscribe({ uuid: fin.me.uuid }, 'window_manager', handleSubscription);
+    fin.InterApplicationBus.subscribe({ uuid: fin.me.uuid }, WINDOW_MANAGER_CHANNEL, handleSubscription);
   }
 
   openWindow = async (options: WindowOption) => {
