@@ -45,6 +45,12 @@ export class TileWindowManagerService implements TileWindowManager {
   }
 
   openWindow = async (options: WindowOption) => {
+    const existingWindow = this.windows.find(item => item.identity.name === options.name);
+    if (existingWindow) {
+      await existingWindow.focus();
+      return;
+    }
+
     const window = await fin.Window.create({
       ...options,
       autoShow: false,
