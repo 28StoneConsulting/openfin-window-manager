@@ -56,7 +56,7 @@ Dispatch increment action to the particular window's store.
 
 ```typescript
 import { createAction, props, Store } from "@ngrx/store";
-import { RoutingInfo } from "@28stoneconsulting/openfin-window-manager";
+import { RoutingInfo } from "@28stoneconsulting/tile-window-manager";
 
 export const incrementBy = createAction(
   "[Counter] IncrementBy",
@@ -87,7 +87,7 @@ Dispatch increment action to the parent window's sate with action creator with p
 
 ```typescript
 import { createAction, Store } from "@ngrx/store";
-import { routingProps } from "@28stoneconsulting/openfin-window-manager";
+import { routingProps } from "@28stoneconsulting/tile-window-manager";
 
 export const incrementParentBy = createAction(
   "[Counter] IncrementBy",
@@ -111,7 +111,7 @@ To clone and run the demo you'll need [Git](https://git-scm.com) and [Node.js](h
 # Clone this repository
 git clone https://github.com/28StoneConsulting/openfin-ngrx.git
 # Go into the repository
-cd openfin-window-manager
+cd tile-window-manager
 # Install dependencies
 npm install
 # Run the the demo

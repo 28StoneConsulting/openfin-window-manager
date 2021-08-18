@@ -1,47 +1,42 @@
 import { Injectable } from '@angular/core';
-import { AnchorType, Bounds } from 'openfin/_v2/shapes/shapes';
 import { _Window } from 'openfin/_v2/api/window/window';
-import { MonitorDetails, Rect } from 'openfin/_v2/api/system/monitor';
-import WindowBoundsEvent = fin.WindowBoundsEvent;
-import { WindowManagerProxyMessage } from './types';
+import { TileManagerProxyMessage, TileWindowManager } from './types';
+import { WindowOptions } from 'openfin/_v2/shapes/WindowOptions';
 
 @Injectable({
   providedIn: 'root',
 })
-export class OpenfinWindowManagerProxyService {
+export class TileWindowManagerProxyService implements TileWindowManager {
   constructor() {}
 
-  openWindow = async (name: string, url: string, width: number, height: number) => {
+  openWindow = async (options: WindowOptions) => {
     return this.sendMessage({
       type: 'openWindow',
-      name,
-      url,
-      width,
-      height
+      options,
     });
-  }
+  };
 
   registerMainWindow = (window: _Window) => {
     return this.sendMessage({
       type: 'registerMainWindow',
-      name: window.identity.name
+      name: window.identity.name,
     });
-  }
+  };
 
   closeAllChildWindows = async () => {
     return this.sendMessage({
-      type: 'closeAllChildWindows'
+      type: 'closeAllChildWindows',
     });
-  }
+  };
 
   clearLastWindowData = async () => {
     return this.sendMessage({
-      type: 'clearLastWindowData'
+      type: 'clearLastWindowData',
     });
-  }
+  };
 
-  private sendMessage = async (data: WindowManagerProxyMessage) => {
+  private sendMessage = async (data: TileManagerProxyMessage) => {
     const mainWindow = await fin.Application.getCurrentSync().getWindow();
     fin.InterApplicationBus.send(mainWindow.identity, 'window_manager', data);
-  }
+  };
 }

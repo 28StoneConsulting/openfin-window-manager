@@ -1,4 +1,4 @@
-# Openfin Window Manager
+# Tile Window Manager
 
 OpenFin window manager for child window positioning.
 
@@ -9,9 +9,9 @@ To clone and run the demo you'll need [Git](https://git-scm.com) and [Node.js](h
 ```bash
 
 # Clone this repository
-git clone https://github.com/28StoneConsulting/openfin-window-manager.git
+git clone https://github.com/28StoneConsulting/tile-window-manager.git
 # Go into the repository
-cd openfin-window-manager
+cd tile-window-manager
 # Install dependencies
 npm install
 # Run the the demo

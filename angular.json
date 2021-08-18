@@ -3,38 +3,38 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "openfin-window-manager": {
+    "tile-window-manager": {
       "projectType": "library",
-      "root": "projects/openfin-window-manager",
-      "sourceRoot": "projects/openfin-window-manager/src",
+      "root": "projects/tile-window-manager",
+      "sourceRoot": "projects/tile-window-manager/src",
       "prefix": "lib",
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-ng-packagr:build",
           "options": {
-            "tsConfig": "projects/openfin-window-manager/tsconfig.lib.json",
-            "project": "projects/openfin-window-manager/ng-package.json"
+            "tsConfig": "projects/tile-window-manager/tsconfig.lib.json",
+            "project": "projects/tile-window-manager/ng-package.json"
           },
           "configurations": {
             "production": {
-              "tsConfig": "projects/openfin-window-manager/tsconfig.lib.prod.json"
+              "tsConfig": "projects/tile-window-manager/tsconfig.lib.prod.json"
             }
           }
         },
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
-            "main": "projects/openfin-window-manager/src/test.ts",
-            "tsConfig": "projects/openfin-window-manager/tsconfig.spec.json",
-            "karmaConfig": "projects/openfin-window-manager/karma.conf.js"
+            "main": "projects/tile-window-manager/src/test.ts",
+            "tsConfig": "projects/tile-window-manager/tsconfig.spec.json",
+            "karmaConfig": "projects/tile-window-manager/karma.conf.js"
           }
         },
         "lint": {
           "builder": "@angular-devkit/build-angular:tslint",
           "options": {
             "tsConfig": [
-              "projects/openfin-window-manager/tsconfig.lib.json",
-              "projects/openfin-window-manager/tsconfig.spec.json"
+              "projects/tile-window-manager/tsconfig.lib.json",
+              "projects/tile-window-manager/tsconfig.spec.json"
             ],
             "exclude": ["**/node_modules/**"]
           }
@@ -173,5 +173,5 @@
       }
     }
   },
-  "defaultProject": "openfin-window-manager"
+  "defaultProject": "tile-window-manager"
 }
