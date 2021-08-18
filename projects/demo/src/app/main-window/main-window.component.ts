@@ -10,6 +10,7 @@ export class MainWindowComponent {
   constructor(private windowManager: OpenfinWindowManagerService, cd: ChangeDetectorRef) {
   }
 
+  secondaryWindowCount = 0;
   windowCount = 0;
 
   openWindow = async () => {
@@ -24,5 +25,19 @@ export class MainWindowComponent {
 
   clearLastWindowData = () => {
     this.windowManager.clearLastWindowData();
+  }
+
+  createSecondaryWindow = () => {
+    fin.Window.create({
+      name: `Secondary Window ${++this.secondaryWindowCount}`,
+      url: '/secondary',
+      defaultWidth: 300,
+      defaultHeight: 100,
+      defaultCentered: true,
+    });
+  }
+
+  setWindowAsMain = () => {
+    this.windowManager.registerMainWindow(fin.Window.getCurrentSync());
   }
 }

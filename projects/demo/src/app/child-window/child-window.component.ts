@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { _Window } from 'openfin/_v2/api/window/window';
 import { OpenfinWindowManagerService } from '../../../../openfin-window-manager/src/lib/openfin-window-manager.service';
+import { OpenfinWindowManagerProxyService } from '../../../../openfin-window-manager/src/lib/openfin-window-manager-proxy.service';
 
 @Component({
   selector: 'app-main-window',
@@ -9,7 +10,7 @@ import { OpenfinWindowManagerService } from '../../../../openfin-window-manager/
 })
 export class ChildWindowComponent implements OnInit {
   window: _Window;
-  constructor(private windowManager: OpenfinWindowManagerService) {
+  constructor(private windowManager: OpenfinWindowManagerProxyService) {
   }
 
   ngOnInit() {

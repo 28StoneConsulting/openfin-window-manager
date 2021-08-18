@@ -15,11 +15,13 @@ import { MatInputModule } from '@angular/material/input';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatDividerModule } from '@angular/material/divider';
 import { ChildWindowComponent } from './child-window/child-window.component';
+import { SecondaryWindowComponent } from './secondary-window/secondary-window.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     MainWindowComponent,
+    SecondaryWindowComponent,
     ChildWindowComponent,
   ],
   imports: [

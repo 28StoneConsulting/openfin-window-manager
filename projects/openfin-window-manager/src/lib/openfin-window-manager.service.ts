@@ -3,6 +3,7 @@ import { AnchorType, Bounds } from 'openfin/_v2/shapes/shapes';
 import { _Window } from 'openfin/_v2/api/window/window';
 import { MonitorDetails, Rect } from 'openfin/_v2/api/system/monitor';
 import WindowBoundsEvent = fin.WindowBoundsEvent;
+import { WindowManagerProxyMessage } from './types';
 
 export type WindowMonitor = {
   primary: boolean;
@@ -17,12 +18,32 @@ const HORIZONTAL_OFFSET = 100;
   providedIn: 'root',
 })
 export class OpenfinWindowManagerService {
+  private mainWindow: _Window;
+  private windows: _Window[] = [];
   private lastWindow: _Window;
-  private lastWindowName: string;
   private lastWindowBounds: Bounds;
-  private lastWindowMonitor: WindowMonitor;
   private layoutPassNum = 0;
-  constructor() {}
+  constructor() {
+    const handleSubscription = async (data: WindowManagerProxyMessage) => {
+      switch (data.type) {
+        case 'openWindow':
+          await this.openWindow(data.name, data.url, data.width, data.height);
+          break;
+        case 'registerMainWindow':
+          const window = fin.Window.wrapSync({ uuid: fin.me.uuid, name: data.name });
+          this.registerMainWindow(window);
+          break;
+        case 'closeAllChildWindows':
+          await this.closeAllChildWindows();
+          break;
+        case 'clearLastWindowData':
+          await this.clearLastWindowData();
+          break;
+      }
+    };
+
+    fin.InterApplicationBus.subscribe({ uuid: fin.me.uuid }, 'window_manager', handleSubscription);
+  }
 
   openWindow = async (name: string, url: string, width: number, height: number) => {
     const window = await fin.Window.create({
@@ -32,61 +53,81 @@ export class OpenfinWindowManagerService {
       url
     });
 
+    const lastWindowMonitor = await this.getWindowMonitor(this.lastWindow || this.mainWindow || fin.Window.getCurrentSync());
     let windowBounds: Bounds;
-    this.lastWindowMonitor = this.lastWindowMonitor || await this.getWindowMonitor(fin.Window.getCurrentSync());
+
+    if (!this.lastWindowBounds) {
+      this.lastWindowBounds = JSON.parse(localStorage.getItem('lastWindowBounds'));
+    }
 
     if (this.lastWindowBounds) {
-      const allWindows = await fin.System.getAllWindows();
       let top = this.lastWindowBounds.top;
       let left = this.lastWindowBounds.left;
 
-      if (allWindows[0].childWindows.find(item => item.name === this.lastWindowName)) {
+      if (this.windows.find(item => item.identity.name === this.lastWindow.identity.name)) {
         top += WINDOW_OFFSET;
         left += WINDOW_OFFSET;
       }
 
       windowBounds = { top, left, bottom: top + height, right: left + width, width, height };
 
-      if (!this.windowFitToScreen(windowBounds, this.lastWindowMonitor.bounds)) {
-        windowBounds.top = this.lastWindowMonitor.bounds.top + WINDOW_OFFSET;
-        windowBounds.left = this.lastWindowMonitor.bounds.left + WINDOW_OFFSET + this.layoutPassNum * HORIZONTAL_OFFSET;
+      if (!this.windowFitToScreen(windowBounds, lastWindowMonitor.bounds)) {
+        windowBounds.top = lastWindowMonitor.bounds.top + WINDOW_OFFSET;
+        windowBounds.left = lastWindowMonitor.bounds.left + WINDOW_OFFSET + this.layoutPassNum * HORIZONTAL_OFFSET;
         this.layoutPassNum++;
       }
     } else {
-      windowBounds = await this.getCenterWindowBounds(window, width, height, this.lastWindowMonitor.bounds);
+      windowBounds = await this.getCenteredWindowBounds(window, width, height, lastWindowMonitor.bounds);
     }
 
     await window.setBounds(windowBounds);
-    await this.lastWindow?.removeListener('bounds-changed', this.windowBoundsChangeHandler);
-    window.addListener('bounds-changed', this.windowBoundsChangeHandler);
+    this.lastWindow?.removeListener('bounds-changed', this.windowBoundsChangedHandler);
+    window.addListener('bounds-changed', this.windowBoundsChangedHandler);
+    window.addListener('closed', this.windowClosedHandler);
     this.lastWindow = window;
+    localStorage.setItem('lastWindowBounds', JSON.stringify(windowBounds));
     this.lastWindowBounds = windowBounds;
-    this.lastWindowName = name;
+    this.windows.push(window);
     window.show();
   }
 
+  registerMainWindow = (window: _Window) => {
+    this.mainWindow = window;
+  }
+
   closeAllChildWindows = async () => {
-    const allWindows = await fin.System.getAllWindows();
-    allWindows[0].childWindows.forEach(item => fin.Window.wrap({ uuid: fin.me.uuid, name: item.name }).then(window => window.close()));
+    this.windows.forEach(window => window.close());
   }
 
-  clearLastWindowData = () => {
-    this.lastWindowName = null;
+  clearLastWindowData = async () => {
+    this.lastWindow = null;
     this.lastWindowBounds = null;
-    this.lastWindowMonitor = null;
     this.layoutPassNum = 0;
+    localStorage.removeItem('lastWindowBounds');
   }
 
-  private windowBoundsChangeHandler = (e: WindowBoundsEvent) => {
+  private windowBoundsChangedHandler = (e: WindowBoundsEvent) => {
+    if (!this.lastWindowBounds) {
+      return;
+    }
+
     this.lastWindowBounds.top = e.top;
     this.lastWindowBounds.left = e.left;
-    this.lastWindowBounds.right = e.left + e.width;
     this.lastWindowBounds.bottom = e.top + e.height;
+    this.lastWindowBounds.right = e.left + e.width;
     this.lastWindowBounds.width = e.width;
     this.lastWindowBounds.height = e.height;
   }
 
-  private getCenterWindowBounds = async (window: _Window, width: number, height: number, monitorBounds: Rect): Promise<Bounds> => {
+  private windowClosedHandler = (e) => {
+    if (this.lastWindow?.identity.name === e.name) {
+      this.lastWindow = null;
+    }
+
+    this.windows = this.windows.filter(item => item.identity.name !== e.name);
+  }
+
+  private getCenteredWindowBounds = async (window: _Window, width: number, height: number, monitorBounds: Rect): Promise<Bounds> => {
     const windowTop = monitorBounds.top + (monitorBounds.bottom - monitorBounds.top) / 2 - height / 2;
     const windowLeft = monitorBounds.left + (monitorBounds.right - monitorBounds.left) / 2 - width / 2;
     return { top: windowTop, left: windowLeft, bottom: windowTop + height, right: windowLeft + width, width, height };
